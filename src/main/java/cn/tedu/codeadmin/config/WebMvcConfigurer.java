@@ -16,7 +16,6 @@ public class WebMvcConfigurer implements org.springframework.web.servlet.config.
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
-//                .allowedOrigins("http://172.31.92.75:8091")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)
