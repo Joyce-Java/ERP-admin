@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeadmin.mapper.AdminMapper">
+        <!--    int insert(Admin admin); -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ams_admin(
+        username, password, nickname, avatar,
+        phone, email, description, enable,
+        last_login_ip, login_count, gmt_last_login )
+        values (
+        #{username},#{password},#{nickname},#{avatar},
+                #{phone},#{email},#{description},#{enable},
+                #{lastLoginIp},#{loginCount},#{gmtLastLogin}
+         )
+    </insert>
+    <!--    int deleteById(Long id); -->
+    <delete id="deleteById">
+        DELETE FROM ams_admin WHERE id=#{id};
+    </delete>
+
+    <!--    int updateById(Admin admin); -->
+    <update id="updateById">
+        UPDATE ams_admin
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="enable != null">
+                enable = #{enable},
+            </if>
+            <if test="lastLoginIp != null">
+                last_login_ip = #{lastLoginIp},
+            </if>
+            <if test="loginCount != null">
+                login_count = #{loginCount},
+            </if>
+            <if test="gmtLastLogin != null">
+                gmt_last_login = #{gmtLastLogin},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate},
+            </if>
+
+                gmt_Modifed = #{gmtModified}
+
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--    int countByUsername(String username); -->
+    <select id="countByUsername" resultType="int">
+        SELECT COUNT(*) FROM ams_admin WHERE username = #{username}
+    </select>
+
+    <!--    int countByPhone(String phone); -->
+    <select id="countByPhone" resultType="int">
+        SELECT COUNT(*) FROM ams_admin WHERE phone = #{phone}
+    </select>
+    <!--    int countByEmail(String email); -->
+    <select id="countByEmail" resultType="int">
+        SELECT COUNT(*) FROM ams_admin WHERE email = #{email}
+    </select>
+
+    <!--    AdminStandardItemVO getStandardById(Long id); -->
+    <select id="getStandardById" resultMap="StandardResultMap">
+        SELECT <include refid="StandardQueryFields"/> FROM ams_admin where id=#{id}
+    </select>
+
+    <!--    List<AdminListItemVO> list(); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT <include refid="ListQueryFields"/> from ams_admin ORDER BY enable DESC ,id
+    </select>
+
+    <select id="getLoginInfoByUsername" resultMap="LoginResultMap">
+        SELECT
+        <include refid="LoginQueryFields" />
+        FROM
+        ams_admin
+        LEFT JOIN ams_admin_role ON ams_admin.id=ams_admin_role.admin_id
+        LEFT JOIN ams_role_permission ON ams_admin_role.role_id=ams_role_permission.role_id
+        LEFT JOIN ams_permission ON ams_role_permission.permission_id=ams_permission.id
+        WHERE
+        username=#{username}
+    </select>
+
+    <sql id="ListQueryFields">
+        <if test="true">
+            id,username, nickname, avatar, phone, email,
+            description, enable, last_login_ip, login_count, gmt_last_login
+        </if>
+    </sql>
+
+
+    <sql id="StandardQueryFields">
+        <if test="true">
+            id,username, nickname, avatar,
+            phone, email, description, enable,
+            last_login_ip, login_count, gmt_last_login
+        </if>
+    </sql>
+    <sql id="LoginQueryFields">
+        <if test="true">
+            ams_admin.id,
+            ams_admin.username,
+            ams_admin.password,
+            ams_admin.enable,
+            ams_permission.value
+        </if>
+    </sql>
+    <resultMap id="ListResultMap" type="cn.tedu.codeadmin.pojo.vo.AdminListItemVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="description" property="description"/>
+        <result column="enable" property="enable"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="login_count" property="loginCount"/>
+        <result column="gmt_last_login" property="gmtLastLogin"/>
+    </resultMap>
+
+
+    <resultMap id="StandardResultMap" type="cn.tedu.codeadmin.pojo.vo.AdminStandardItemVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="description" property="description"/>
+        <result column="enable" property="enable"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="login_count" property="loginCount"/>
+        <result column="gmt_last_login" property="gmtLastLogin"/>
+    </resultMap>
+
+    <!--當涉及1個查詢時 需要用到collection標籤配置List集合類型的屬性-->
+    <!--collection標籤的property屬性:類中List集合的屬性名稱-->
+    <!--collection標籤ofType屬性:類中List集合的元素類型的全限定名-->
+    <!--collection標籤的子級:需要配置如何創建出一個個元素對象-->
+    <!--constructor標籤:將通過構造方法來創建對象-->
+    <!--constructor標籤子級的arg標籤:配置構造方法的參數-->
+    <resultMap id="LoginResultMap" type="cn.tedu.codeadmin.pojo.vo.AdminLoginInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enable" property="enable"/>
+        <collection property="permissions" ofType="java.lang.String">
+            <constructor>
+                <arg column="value"/>
+            </constructor>
+        </collection>
+    </resultMap>
+</mapper>
