@@ -61,9 +61,9 @@
             <if test="gmtCreate != null">
                 gmt_create = #{gmtCreate},
             </if>
-
+            <if test="gmtCreate != null">
                 gmt_Modifed = #{gmtModified}
-
+            </if>
         </set>
         WHERE id = #{id}
     </update>
